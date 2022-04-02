@@ -14,7 +14,9 @@ class App extends Component {
 
     this.renderNodes = this.renderNodes.bind(this);
     this.onAdd = this.onAdd.bind(this);
+    this.addNode = this.addNode.bind(this);
     this.onRemove = this.onRemove.bind(this);
+    this.findNode = this.findNode.bind(this);
     this.generateNode = this.generateNode.bind(this);
   }
 
@@ -26,12 +28,48 @@ class App extends Component {
     return node;
   }
 
+  findNode(nodes, id){
+    let node = null;
+
+    for (let index = 0; index < nodes.length; index++) {
+      const element = nodes[index];
+
+      if (element.id === Number(id)){
+        node = element;
+        break;
+      }
+
+      node = this.findNode(element.children, id);
+    }
+
+    return node;
+  }
+
+  addNode(nodes, id){
+    const baseId = this.id;
+
+    return nodes.map((node) => {
+      if (node.id === id){
+        node.children.push({ id: baseId, children: [] })
+        this.id += 1;
+
+        return node;
+      } else {
+        this.addNode(node.children, id);
+        return node;
+      }
+    })
+  }
+
   onAdd(e){
-    console.log('Add: TODO');
+    const id = e.currentTarget.dataset.id;
+
+    this.setState((state) => ({ nodes: this.addNode(state.nodes, Number(id)) }));
   }
 
   onRemove(e){
-    console.log('Remove: TODO');
+    const id = e.currentTarget.dataset.id;
+    console.log('Remove: TODO', id);
   }
 
   renderNodes(nodes){
