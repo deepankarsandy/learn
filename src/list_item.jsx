@@ -1,6 +1,6 @@
 export default function ListItem(props){
   return (
-    <li className="list-item" key={props.id} data-id={props.id}>
+    <li className="list-item" data-id={props.id}>
       <span>Counter: {props.ctr}</span>
       <button data-id={props.id} onClick={props.onAdd} className="add button">
         <span>+</span>

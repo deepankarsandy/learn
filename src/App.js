@@ -9,7 +9,7 @@ class App extends Component {
 
     this.id = 1;
     this.state = {
-      nodes: [{ ...this.generateNode(), children: [this.generateNode(), this.generateNode()] }, this.generateNode()],
+      nodes: []
     }
 
     this.renderNodes = this.renderNodes.bind(this);
@@ -48,28 +48,45 @@ class App extends Component {
   addNode(nodes, id){
     const baseId = this.id;
 
+    if (!nodes.length){
+      return [{ id: baseId, children: [] }];
+    }
+
     return nodes.map((node) => {
       if (node.id === id){
         node.children.push({ id: baseId, children: [] })
-        this.id += 1;
 
         return node;
       } else {
         this.addNode(node.children, id);
         return node;
       }
-    })
+    });
   }
 
   onAdd(e){
     const id = e.currentTarget.dataset.id;
 
-    this.setState((state) => ({ nodes: this.addNode(state.nodes, Number(id)) }));
+    this.setState((state) => ({ nodes: this.addNode(state.nodes, Number(id)) }), () => {
+      this.id += 1;
+    });
+  }
+
+  deleteNode(nodes, id){
+    return nodes.map((node) => {
+      if (node.id === id){
+        return false;
+      } else {
+        node.children = this.deleteNode(node.children, id);
+        return node;
+      }
+    }).filter(Boolean);
   }
 
   onRemove(e){
     const id = e.currentTarget.dataset.id;
-    console.log('Remove: TODO', id);
+
+    this.setState((state) => ({ nodes: this.deleteNode(state.nodes, Number(id)) }));
   }
 
   renderNodes(nodes){
@@ -77,7 +94,7 @@ class App extends Component {
       <ul key={node.id}>
         <ListItem id={node.id} ctr={idx} onAdd={this.onAdd} onRemove={this.onRemove} />
         {this.renderNodes(node.children)}
-        <ul><AddChild onAdd={this.onAdd} /></ul>
+        <ul><AddChild onAdd={this.onAdd} id={node.id} /></ul>
       </ul>
     ));
   }
@@ -87,9 +104,8 @@ class App extends Component {
 
     return (
       <div className="App">
-        <ul>
-          {this.renderNodes(nodes)}
-        </ul>
+        {this.renderNodes(nodes)}
+        {!nodes.length && <ul><AddChild onAdd={this.onAdd} /></ul>}
       </div>
     );
   }
