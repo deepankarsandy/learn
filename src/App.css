@@ -1,3 +1,30 @@
-.App {
-  text-align: center;
+.App ul {
+  list-style: square;
+}
+
+.add.button, .remove.button {
+  background: #e8dddd1a;
+  border: 1px solid silver;
+  padding: 0.4em;
+  height: 2em;
+  width: 2em;
+  border-radius: 0.2em;
+}
+
+.remove.button {
+  border: none !important;
+  color: #c4c4c4e0;
+  background: none !important;
+}
+
+button.button:hover {
+  cursor: pointer;
+}
+
+li.list-item {
+  padding: 0.5em 0;
+}
+
+li.list-item > * {
+  margin-right: 0.5rem;
 }
